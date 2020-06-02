@@ -37,3 +37,14 @@ train ="""--input=./data/ratings_train.txt \
 ```
 spm.SentencePieceTrainer.Train(train)
 ```
+
+학습된 모델을 로드합니다.
+```
+sp = spm.SentencePieceProcessor()
+sp.Load('sentpiece.model')
+```
+Sentencepiece 로 학습한 모델, 사전으로 토크나이징한 결과는 다음과 같습니다.
+```
+>>> sp.EncodeAsPieces('이 영화는 정말 기분나쁘고 소름돋아서 다시는 보기 싫었어요.')
+['▁이', '▁영화는', '▁정말', '▁기분나쁘', '고', '▁소름돋', '아서', '▁다시는', '▁보기', '▁싫', '었어요', '.']
+```
