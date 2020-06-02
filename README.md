@@ -59,3 +59,23 @@ Sentencepiece 로 학습한 모델, 사전으로 토크나이징한 결과는 �
 ...
 [('영화', 'Noun'), ('는', 'Josa')]
 ```
+
+이런식으로 사전 단어에서 명사를 추출하고 해당 단어에서 명사를 제거한 부분만 추출하였습니다. 그리고 중복제거를 통해 사전을 만들게 됩니다.
+```
+nouns = []
+removal_nouns = []
+for i in vocabs["word"]:
+    extract_nouns = okt.nouns(i)
+    if len(extract_nouns) == 1:
+        nouns.append("".join(extract_nouns))           
+        removal = i.replace("".join(extract_nouns),"") 
+        removal_nouns.append(removal)
+        
+    else:
+        nouns.append("")
+        removal_nouns.append(i)  
+```
+
+### 3. WordPiece Tokenizing 개선하기
+word piece 방식의 토크나이징의 경우 동음이의어를 구분하지 못한다는 단점이 있습니다.
+
