@@ -80,3 +80,57 @@ for i in vocabs["word"]:
 ### 3. WordPiece Tokenizing 개선하기
 word piece 방식의 토크나이징의 경우 동음이의어를 구분하지 못한다는 단점이 있습니다.
 
+이러한 점을 개선하기 위해서 '\_'를 token에 붙입니다.
+```
+u_final_vocab=[]
+for i in final_vocab:
+    u = f'{i}_'
+    u_final_vocab.append(u)
+    u_final_vocab.append(i)  
+```
+
+모든 사전 단어에 '\_'를 붙였기 때문에 불필요하게 사전 단어가 늘어있는 상태라 실제 사용된 토큰만 다시 추출합니다.
+
+우선 **tokenizer_kor.py** 를 사용하기 위해 구글 임베딩용 토큰을 넣어주고 txt 파일로 저장합니다.
+```
+bert_specific=["[UNK]","[CLS]","[SEP]","[MASK]"]
+for i in bert_specific:
+    u_final_vocab.append(i)
+    
+fin_vocab = pd.DataFrame(data = u_final_vocab, columns=None, index =None)
+fin_vocab.to_csv("./test_vocab.txt", header=None, index=None)
+```
+
+방금 만든 사전을 기반으로 토크나이저를 로드합니다.
+```
+>>> import tokenization_kor as tokenization
+>>> tokenizer = tokenization.FullTokenizer("test_vocab.txt")
+```
+
+전체 말뭉치를 해당 토크나이저로 토크나이징하고 실제 쓰인 토큰을 중복없이 리스트에 넣어주면 최종 사전이 완성됩니다.
+```
+data = pd.read_csv("./data/ratings_train.txt",sep="\t")
+
+use_vocab = []
+for sentence in tqdm(data["document"]):
+    try:
+        token = tokenizer.tokenize(sentence)
+        for t in token:
+            if t not in use_vocab:
+                use_vocab.append(t)
+    except:
+        pass
+```
+
+그냥 구글 Sentencepiece를 사용하여 학습한 사전과 추가 작업을 한 최종 사전을 통한 토크나이징 결과의 차이입니다.
+```
+>>> sp.EncodeAsPieces('이 영화는 정말 기분나쁘고 소름돋아서 다시는 보기 싫었어요.')
+....
+['▁이', '▁영화는', '▁정말', '▁기분나쁘', '고', '▁소름돋', '아서', '▁다시는', '▁보기', '▁싫', '었어요', '.']
+
+>>> tokenizer.tokenize('이 영화는 정말 기분나쁘고 소름돋아서 다시는 보기 싫었어요.')
+....
+['이_', '영화', '는_', '정말_', '기분', '나쁘', '고_', '소름', '돋', '아서_', '다시는_', '보기_', '싫', '었어', '요', '.']
+
+
+```
