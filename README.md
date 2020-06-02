@@ -19,3 +19,10 @@ BERT를 통해 한글 의도 분류 모델을 만들기 위해서 가장 처음 
 
 
 ## 한글 사전 
+### 1. Google sentencepiece 활용 사전 만들기
+
+해당 내용은 [구글 sentencepiece github](https://github.com/google/sentencepiece)을 참조하면 이해하기 쉽습니다.   
+먼저 sentencepiece 라이브러리를 불러옵니다.
+```
+  import sentencepiece as spm
+```
