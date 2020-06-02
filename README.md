@@ -26,3 +26,14 @@ BERT를 통해 한글 의도 분류 모델을 만들기 위해서 가장 처음 
 ```
   import sentencepiece as spm
 ```
+하이퍼파라미터를 설정합니다.
+```
+train ="""--input=./data/ratings_train.txt \
+    --model_prefix=sentpiece \
+    --vocab_size=30000 \
+    --model_type=bpe --character_coverage=0.9995"""
+```
+학습을 하면 모델, 사전 파일이 생깁니다.
+```
+spm.SentencePieceTrainer.Train(train)
+```
